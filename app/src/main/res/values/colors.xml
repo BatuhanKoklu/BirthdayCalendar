@@ -5,7 +5,10 @@
     <color name="colorAccent">#7e57c2</color>
     <color name="colorBlack">#212121</color>
     <color name="colorWhite">#FFFFFF</color>
-    #212121
+    <color name="colorGrey">#BDBDBD</color>
+    <color name="colorDarkPurple">#4527a0</color>
+    <color name="colorLime">#B4E236</color>
+    <color name="colorDeepOrange">#FF5722</color>
 
 
 
