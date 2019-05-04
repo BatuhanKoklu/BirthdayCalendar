@@ -8,6 +8,9 @@ public class BirthdayModel {
     private String birthdayDate;
     private int birthdayFavorite;
 
+    public BirthdayModel() {
+    }
+
     public BirthdayModel(int birthdayId, String birthdayName, String birthdayNote, String birthdayDate, int birthdayFavorite) {
         this.birthdayId = birthdayId;
         this.birthdayName = birthdayName;

@@ -1,6 +1,7 @@
 package batuhan.com.birthdaycalendar.Activities;
 
 import android.graphics.Color;
+import android.media.Image;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +16,7 @@ import android.support.v7.widget.SearchView;
 import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.Toolbar;
@@ -25,6 +27,9 @@ import java.util.Date;
 import java.util.Locale;
 
 import batuhan.com.birthdaycalendar.Adapters.AdapterBirthdayCardView;
+import batuhan.com.birthdaycalendar.Adapters.BirthdayDAO;
+import batuhan.com.birthdaycalendar.Adapters.VeritabaniYardimcisi;
+import batuhan.com.birthdaycalendar.Helpers.Helpers;
 import batuhan.com.birthdaycalendar.Models.BirthdayModel;
 import batuhan.com.birthdaycalendar.R;
 
@@ -39,12 +44,21 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     private TextView txtAlertDate;
     private EditText etxtBirthdayName, etxtNote;
-    private Button btnAdd, btnCancel;
+    private Button btnAdd, btnCancel, btnStar;
+
+    private VeritabaniYardimcisi vt;
+
+    private Helpers h;
+
+    boolean star;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        vt = new VeritabaniYardimcisi(this);
+        h = new Helpers();
 
         txtDate = findViewById(R.id.txtDate);
         calendarView = findViewById(R.id.calendarView);
@@ -56,19 +70,17 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
         recyclerView = findViewById(R.id.recyclerview);
         recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        birthdayModelList = new ArrayList<BirthdayModel>();
+        h.getBirthdays(vt,adapter,recyclerView,this);
 
-        BirthdayModel model = new BirthdayModel(1,"Batuhan Köklü'nün doğum günü","Bodrumda Kutlanacak","22.07.1997",0);
-        birthdayModelList.add(model);
-
-        adapter = new AdapterBirthdayCardView(getApplicationContext(),birthdayModelList);
-        recyclerView.setAdapter(adapter);
 
         //Page yüklendiğinde o günün date i text e yazılsın
         String date = new SimpleDateFormat("dd/M/yyyy", Locale.getDefault()).format(new Date());
         txtDate.setText(date);
+
+
+
 
         //Seçilen günü textview a yazdır
         calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
@@ -116,6 +128,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 etxtNote = tasarim.findViewById(R.id.etxtNote);
                 btnAdd = tasarim.findViewById(R.id.btnAdd);
                 btnCancel = tasarim.findViewById(R.id.btnCancel);
+                btnStar = tasarim.findViewById(R.id.btnStar);
+
+                star = false;
 
                 AlertDialog.Builder ao = new AlertDialog.Builder(MainActivity.this);
                 ao.setView(tasarim);
@@ -126,10 +141,12 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
                 alertDialog.show();
 
-
+                //Add Birthday
                 btnAdd.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+
+                        new BirthdayDAO().addBirthday(vt,h.getText(etxtBirthdayName),h.getText(etxtNote),txtAlertDate.getText().toString(),h.boolToint(star));
 
                         String birthday = etxtBirthdayName.getText().toString();
 
@@ -142,6 +159,23 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     @Override
                     public void onClick(View v) {
                      alertDialog.dismiss();
+                    }
+                });
+
+
+                btnStar.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        star = !star;
+
+                        if (star == true){
+                            Toast.makeText(getApplicationContext(),"true",Toast.LENGTH_SHORT).show();
+                            btnStar.setBackgroundResource(R.drawable.icon_filled_star_yellow);
+                        }else{
+                            Toast.makeText(getApplicationContext(),"false",Toast.LENGTH_SHORT).show();
+                            btnStar.setBackgroundResource(R.drawable.icon_empty_star_yellow);
+                        }
+
                     }
                 });
 
@@ -160,7 +194,14 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     @Override
     public boolean onQueryTextSubmit(String query) {
 
-        Log.e("TextSubmit",query);
+        //List olıştur, bir günde birden fazla dg olabilir
+        birthdayModelList = new ArrayList<BirthdayModel>();
+
+        birthdayModelList = new BirthdayDAO().searchBirthday(vt,query);
+
+        adapter = new AdapterBirthdayCardView(getApplicationContext(),birthdayModelList);
+        recyclerView.setAdapter(adapter);
+
 
         return true;
     }
@@ -168,15 +209,10 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     @Override
     public boolean onQueryTextChange(String newText) {
 
-        Log.e("TextChanged",newText);
+
 
         return true;
     }
-
-    /*public BirthdayModel createModel(){
-
-    }*/
-
 
 
 }

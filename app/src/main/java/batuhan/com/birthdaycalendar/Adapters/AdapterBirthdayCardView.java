@@ -35,7 +35,7 @@ public class AdapterBirthdayCardView extends RecyclerView.Adapter<AdapterBirthda
     @Override
     public void onBindViewHolder(@NonNull CardTasarimTutucu holder, int position) {
 
-        BirthdayModel birthdayModel =birthdayModelArrayList.get(position);
+        BirthdayModel birthdayModel = birthdayModelArrayList.get(position);
 
         holder.txtBirthdayName.setText(birthdayModel.getBirthdayName());
 
