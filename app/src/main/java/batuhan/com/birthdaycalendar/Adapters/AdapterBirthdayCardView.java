@@ -1,11 +1,13 @@
 package batuhan.com.birthdaycalendar.Adapters;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,6 +20,7 @@ public class AdapterBirthdayCardView extends RecyclerView.Adapter<AdapterBirthda
 
     private Context mContext;
     private ArrayList<BirthdayModel> birthdayModelArrayList;
+    private VeritabaniYardimcisi vt;
 
     public AdapterBirthdayCardView(Context mContext, ArrayList<BirthdayModel> birthdayModelArrayList) {
         this.mContext = mContext;
@@ -33,20 +36,49 @@ public class AdapterBirthdayCardView extends RecyclerView.Adapter<AdapterBirthda
     }
 
     @Override
-    public void onBindViewHolder(@NonNull CardTasarimTutucu holder, int position) {
+    public void onBindViewHolder(@NonNull final CardTasarimTutucu holder, int position) {
 
-        BirthdayModel birthdayModel = birthdayModelArrayList.get(position);
+        vt = new VeritabaniYardimcisi(mContext);
+
+        final BirthdayModel birthdayModel = birthdayModelArrayList.get(position);
 
         holder.txtBirthdayName.setText(birthdayModel.getBirthdayName());
 
         holder.txtNote.setText(birthdayModel.getBirthdayNote());
 
         if(birthdayModel.getBirthdayFavorite() == 0){
-            holder.imgFavorite.setBackgroundResource(R.drawable.icon_empty_star_yellow);
+            holder.btnFavorite.setBackgroundResource(R.drawable.icon_empty_star_yellow);
 
         }else if(birthdayModel.getBirthdayFavorite() == 1){
-            holder.imgFavorite.setBackgroundResource(R.drawable.icon_filled_star_yellow);
+            holder.btnFavorite.setBackgroundResource(R.drawable.icon_filled_star_yellow);
         }
+
+        holder.btnFavorite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(holder.btnFavorite.getBackground().getConstantState()
+                        .equals(mContext.getResources().getDrawable(R.drawable.icon_empty_star_yellow).getConstantState())){
+                    holder.btnFavorite.setBackgroundResource(R.drawable.icon_filled_star_yellow);
+                    new BirthdayDAO().changeFavoriteStatus(vt,birthdayModel,1);
+                }else if(holder.btnFavorite.getBackground().getConstantState()
+                        .equals(mContext.getResources().getDrawable(R.drawable.icon_filled_star_yellow).getConstantState())){
+                    holder.btnFavorite.setBackgroundResource(R.drawable.icon_empty_star_yellow);
+                    new BirthdayDAO().changeFavoriteStatus(vt,birthdayModel,0);
+                }
+
+                /*if(birthdayModel.getBirthdayFavorite() == 0){
+                    holder.btnFavorite.setBackgroundResource(R.drawable.icon_filled_star_yellow);
+                    new BirthdayDAO().changeFavoriteStatus(vt,birthdayModel,1);
+
+                }
+
+                if(birthdayModel.getBirthdayFavorite() == 1){
+                    holder.btnFavorite.setBackgroundResource(R.drawable.icon_empty_star_yellow);
+                    new BirthdayDAO().changeFavoriteStatus(vt,birthdayModel,0);
+                }*/
+            }
+        });
     }
 
     @Override
@@ -54,16 +86,31 @@ public class AdapterBirthdayCardView extends RecyclerView.Adapter<AdapterBirthda
         return birthdayModelArrayList.size();
     }
 
+
+    public void removeItem(int position){
+        birthdayModelArrayList.remove(position);
+        notifyItemRemoved(position);
+    }
+
+    public void restoreItem(BirthdayModel model, int position){
+        birthdayModelArrayList.add(position,model);
+        notifyItemInserted(position);
+    }
+
+    public ArrayList<BirthdayModel> getData(){
+        return birthdayModelArrayList;
+    }
+
     public class CardTasarimTutucu extends RecyclerView.ViewHolder {
         private TextView txtBirthdayName;
         private TextView txtNote;
-        private ImageView imgFavorite;
+        private Button btnFavorite;
 
         public CardTasarimTutucu(View view){
             super(view);
             txtBirthdayName = view.findViewById(R.id.txtBirthdayName);
             txtNote = view.findViewById(R.id.txtNote);
-            imgFavorite = view.findViewById(R.id.imgFavorite);
+            btnFavorite = view.findViewById(R.id.btnFavorite);
         }
     }
 }

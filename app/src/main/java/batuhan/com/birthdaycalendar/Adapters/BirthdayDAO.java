@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import java.util.ArrayList;
 
 import batuhan.com.birthdaycalendar.Models.BirthdayModel;
+import batuhan.com.birthdaycalendar.R;
 
 public class BirthdayDAO {
 
@@ -23,7 +24,7 @@ public class BirthdayDAO {
         dbx.close();
     }
 
-    public ArrayList<BirthdayModel> searchBirthday(VeritabaniYardimcisi vt, String birthdayName){
+    public ArrayList<BirthdayModel> searchBirthdayName(VeritabaniYardimcisi vt, String birthdayName){
         ArrayList<BirthdayModel> birthdayModelArrayList = new ArrayList<>();
         SQLiteDatabase dbx = vt.getWritableDatabase();
 
@@ -45,7 +46,7 @@ public class BirthdayDAO {
     }
 
 
-    public ArrayList<BirthdayModel> getBirthdaysFromDate(VeritabaniYardimcisi vt, String birthdayDate){
+    public ArrayList<BirthdayModel> searchBirthdayDate(VeritabaniYardimcisi vt, String birthdayDate){
         ArrayList<BirthdayModel> birthdayModelArrayList = new ArrayList<>();
         SQLiteDatabase dbx = vt.getWritableDatabase();
 
@@ -85,6 +86,39 @@ public class BirthdayDAO {
         }
 
         return birthdayModelArrayList;
+    }
+
+    public void deleteBirhday(VeritabaniYardimcisi vt, BirthdayModel model){
+        SQLiteDatabase dbx = vt.getWritableDatabase();
+        dbx.delete("tbl_birthdayModel","birthdayId=?",new String[]{String.valueOf(model.getBirthdayId())} );
+        dbx.close();
+    }
+
+    public void addBirthdayFromModel(VeritabaniYardimcisi vt,BirthdayModel model){
+        SQLiteDatabase dbx = vt.getWritableDatabase();
+        ContentValues degerler = new ContentValues();
+
+        degerler.put("birthdayName",model.getBirthdayName());
+        degerler.put("birthdayNote",model.getBirthdayNote());
+        degerler.put("birthdayDate",model.getBirthdayDate());
+        degerler.put("birthdayFavorite",model.getBirthdayFavorite());
+
+        dbx.insertOrThrow("tbl_birthdayModel",null,degerler);
+        dbx.close();
+    }
+
+    public void changeFavoriteStatus(VeritabaniYardimcisi vt,BirthdayModel model, int to){
+        SQLiteDatabase dbx = vt.getWritableDatabase();
+        ContentValues degerler = new ContentValues();
+
+
+        degerler.put("birthdayFavorite",to);
+
+        dbx.update("tbl_birthdayModel",degerler,"birthdayId=?", new String[] {String.valueOf(model.getBirthdayId())});
+
+
+
+
     }
 
 

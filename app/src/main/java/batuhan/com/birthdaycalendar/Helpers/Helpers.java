@@ -40,4 +40,12 @@ public class Helpers {
         rv.setAdapter(adapter);
 
     }
+
+    public void searchDateAndAddRV(VeritabaniYardimcisi vt, String date, AdapterBirthdayCardView adapter, RecyclerView recyclerView ,Context context){
+
+        ArrayList<BirthdayModel> list = new BirthdayDAO().searchBirthdayDate(vt,date);
+
+        adapter = new AdapterBirthdayCardView(context,list);
+        recyclerView.setAdapter(adapter);
+    }
 }
