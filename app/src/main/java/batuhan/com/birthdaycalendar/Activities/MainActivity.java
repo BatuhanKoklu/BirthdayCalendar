@@ -1,25 +1,27 @@
 package batuhan.com.birthdaycalendar.Activities;
 
 import android.graphics.Color;
-import android.media.Image;
+import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.support.v7.widget.SearchView;
+import android.view.View;
 import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.Toolbar;
+
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -28,6 +30,7 @@ import java.util.Locale;
 
 import batuhan.com.birthdaycalendar.Adapters.AdapterBirthdayCardView;
 import batuhan.com.birthdaycalendar.Adapters.BirthdayDAO;
+import batuhan.com.birthdaycalendar.Adapters.SwipeToDeleteCallback;
 import batuhan.com.birthdaycalendar.Adapters.VeritabaniYardimcisi;
 import batuhan.com.birthdaycalendar.Helpers.Helpers;
 import batuhan.com.birthdaycalendar.Models.BirthdayModel;
@@ -41,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private RecyclerView recyclerView;
     private CalendarView calendarView;
     private TextView txtDate;
+    private CoordinatorLayout coordinatorLayout;
 
     private TextView txtAlertDate;
     private EditText etxtBirthdayName, etxtNote;
@@ -52,6 +56,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     boolean star;
 
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,8 +67,15 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         vt = new VeritabaniYardimcisi(this);
         h = new Helpers();
 
-        txtDate = findViewById(R.id.txtDate);
+        birthdayModelList = new ArrayList<BirthdayModel>();
+        birthdayModelList = new BirthdayDAO().getAllBirthdays(vt);
+
         calendarView = findViewById(R.id.calendarView);
+        coordinatorLayout = findViewById(R.id.coordinatorLayout);
+        adapter = new AdapterBirthdayCardView(getApplicationContext(),birthdayModelList);
+
+
+
 
         toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("");
@@ -71,13 +85,23 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         recyclerView = findViewById(R.id.recyclerview);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(adapter);
 
         h.getBirthdays(vt,adapter,recyclerView,this);
 
 
+        txtDate = findViewById(R.id.txtDate);
         //Page yüklendiğinde o günün date i text e yazılsın
         String date = new SimpleDateFormat("dd/M/yyyy", Locale.getDefault()).format(new Date());
         txtDate.setText(date);
+
+        enableSwipeToDeleteAndUndo();
+
+
+
+
+
+
 
 
 
@@ -86,7 +110,16 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
             public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth) {
-                txtDate.setText(dayOfMonth+"/"+month+"/"+year);
+                String date = dayOfMonth+"/"+month+"/"+year;
+                txtDate.setText(date);
+
+                birthdayModelList = new ArrayList<BirthdayModel>();
+
+                birthdayModelList = new BirthdayDAO().searchBirthdayDate(vt,date);
+
+                adapter = new AdapterBirthdayCardView(getApplicationContext(),birthdayModelList);
+                recyclerView.setAdapter(adapter);
+
             }
         });
 
@@ -95,8 +128,40 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
 
 
+    }
+
+    private void enableSwipeToDeleteAndUndo() {
+        SwipeToDeleteCallback swipeToDeleteCallback = new SwipeToDeleteCallback(this) {
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
+
+                final int position = viewHolder.getAdapterPosition();
+                final BirthdayModel model = adapter.getData().get(position);
+
+                adapter.removeItem(position);
+                recyclerView.setAdapter(adapter);
+                new BirthdayDAO().deleteBirhday(vt,model);
 
 
+                Snackbar snackbar = Snackbar.make(coordinatorLayout,"Birthday was removed from the list",
+                        Snackbar.LENGTH_LONG);
+                snackbar.setAction("UNDO", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        adapter.restoreItem(model,position);
+                        recyclerView.scrollToPosition(position);
+                        new BirthdayDAO().addBirthdayFromModel(vt,model);
+                    }
+                });
+
+                snackbar.setActionTextColor(Color.YELLOW);
+                snackbar.show();
+            }
+        };
+
+        ItemTouchHelper ıtemTouchHelper = new ItemTouchHelper(swipeToDeleteCallback);
+        ıtemTouchHelper.attachToRecyclerView(recyclerView);
     }
 
     //Toolbar entegresi
@@ -185,6 +250,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
                 return true;
 
+
+
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -197,11 +264,12 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         //List olıştur, bir günde birden fazla dg olabilir
         birthdayModelList = new ArrayList<BirthdayModel>();
 
-        birthdayModelList = new BirthdayDAO().searchBirthday(vt,query);
+        birthdayModelList = new BirthdayDAO().searchBirthdayName(vt,query);
 
         adapter = new AdapterBirthdayCardView(getApplicationContext(),birthdayModelList);
         recyclerView.setAdapter(adapter);
 
+        //searchDateAndAddRV(vt,query,adapter,recyclerView,getApplicationContext());
 
         return true;
     }
@@ -213,6 +281,18 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
         return true;
     }
+
+
+    /*public void searchDateAndAddRV(VeritabaniYardimcisi vt, String date, AdapterBirthdayCardView adapter, RecyclerView recyclerView ,Context context){
+
+        ArrayList<BirthdayModel> list = new ArrayList<BirthdayModel>();
+
+        list = new BirthdayDAO().searchBirthdayDate(vt,date);
+
+        adapter = new AdapterBirthdayCardView(context,list);
+        recyclerView.setAdapter(adapter);
+    }*/
+
 
 
 }
