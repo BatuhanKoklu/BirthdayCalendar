@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         birthdayModelList = new ArrayList<BirthdayModel>();
         birthdayModelList = new BirthdayDAO().getAllBirthdays(vt);
 
-        calendarView = findViewById(R.id.calendarView);
+        //calendarView = findViewById(R.id.calendarView);
         coordinatorLayout = findViewById(R.id.coordinatorLayout);
         adapter = new AdapterBirthdayCardView(getApplicationContext(),birthdayModelList);
 
