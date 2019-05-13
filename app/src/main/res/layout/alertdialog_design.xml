@@ -9,36 +9,32 @@
     <android.support.constraint.ConstraintLayout
         android:layout_width="0dp"
         android:layout_height="230dp"
-        android:layout_marginStart="30dp"
-        android:layout_marginEnd="30dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <Button
             android:id="@+id/btnCancel"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="30dp"
-            android:background="@drawable/add_button_orange"
-            android:text="Cancel"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
+            android:background="@drawable/ic_cancel_white"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/btnAdd"
-            app:layout_constraintTop_toBottomOf="@+id/etxtNote" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/btnAdd"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="30dp"
+            android:layout_height="45dp"
+            android:layout_marginStart="10dp"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="10dp"
-            android:background="@drawable/add_button_green"
+            android:layout_marginEnd="30dp"
+            android:background="@drawable/add_button_white"
             android:text="ADD"
-            app:layout_constraintEnd_toStartOf="@+id/btnCancel"
-            app:layout_constraintStart_toStartOf="parent"
+            android:textColor="@color/colorPrimaryDark"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/btnStar"
             app:layout_constraintTop_toBottomOf="@+id/etxtNote" />
 
         <EditText
@@ -64,7 +60,7 @@
             android:id="@+id/txtAlertDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="12dp"
             android:backgroundTint="@color/colorWhite"
             android:text="Date"
             android:textColor="@color/colorWhite"
@@ -96,11 +92,13 @@
 
         <Button
             android:id="@+id/btnStar"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="30dp"
             android:background="@drawable/icon_empty_star_yellow"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintBottom_toBottomOf="@+id/btnAdd"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/btnAdd" />
 
     </android.support.constraint.ConstraintLayout>
 

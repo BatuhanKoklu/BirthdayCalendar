@@ -25,7 +25,7 @@ public class Helpers {
 
     public int boolToint(boolean b){
         int n;
-        if (b = true){
+        if (b == true){
             n=1;
         }else{
             n=0;

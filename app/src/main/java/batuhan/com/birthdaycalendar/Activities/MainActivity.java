@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     boolean star;
 
+    private Menu menu;
 
 
 
@@ -168,6 +169,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
+        this.menu = menu;
+
         getMenuInflater().inflate(R.menu.toolbar_menu,menu);
 
         //Search Entegresi
@@ -175,7 +178,19 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
         searchView.setOnQueryTextListener(this);
 
+        updateToolbarPoint();
+
+
+
         return true;
+    }
+
+    public void updateToolbarPoint(){
+
+        MenuItem txtpoint = menu.findItem(R.id.text_point);
+
+        String count = Integer.toString(new BirthdayDAO().countBirthdays(vt));
+        txtpoint.setTitle(count);
     }
 
 
@@ -215,8 +230,12 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
                         String birthday = etxtBirthdayName.getText().toString();
 
-                        Toast.makeText(getApplicationContext(),birthday+" added.",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(),birthday+" added." + " star : " + h.boolToint(star),Toast.LENGTH_SHORT).show();
                         alertDialog.dismiss();
+
+                        h.getBirthdays(vt,adapter,recyclerView,getApplicationContext());
+                        updateToolbarPoint();
+
                     }
                 });
 
@@ -262,12 +281,12 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     public boolean onQueryTextSubmit(String query) {
 
         //List olıştur, bir günde birden fazla dg olabilir
-        birthdayModelList = new ArrayList<BirthdayModel>();
+        /*birthdayModelList = new ArrayList<BirthdayModel>();
 
         birthdayModelList = new BirthdayDAO().searchBirthdayName(vt,query);
 
         adapter = new AdapterBirthdayCardView(getApplicationContext(),birthdayModelList);
-        recyclerView.setAdapter(adapter);
+        recyclerView.setAdapter(adapter);*/
 
         //searchDateAndAddRV(vt,query,adapter,recyclerView,getApplicationContext());
 
@@ -277,7 +296,16 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     @Override
     public boolean onQueryTextChange(String newText) {
 
+        birthdayModelList = new ArrayList<BirthdayModel>();
 
+        birthdayModelList = new BirthdayDAO().searchBirthdayName(vt,newText);
+
+        adapter = new AdapterBirthdayCardView(getApplicationContext(),birthdayModelList);
+        recyclerView.setAdapter(adapter);
+
+        if(newText == ""){
+            h.getBirthdays(vt,adapter,recyclerView,getApplicationContext());
+        }
 
         return true;
     }

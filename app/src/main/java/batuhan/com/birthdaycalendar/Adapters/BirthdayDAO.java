@@ -116,9 +116,14 @@ public class BirthdayDAO {
 
         dbx.update("tbl_birthdayModel",degerler,"birthdayId=?", new String[] {String.valueOf(model.getBirthdayId())});
 
+    }
 
-
-
+    public int countBirthdays(VeritabaniYardimcisi vt){
+        SQLiteDatabase dbx = vt.getWritableDatabase();
+        Cursor cursor = dbx.rawQuery("SELECT * FROM tbl_birthdaymodel",null);
+        int count = cursor.getCount();
+        cursor.close();
+        return count;
     }
 
 
