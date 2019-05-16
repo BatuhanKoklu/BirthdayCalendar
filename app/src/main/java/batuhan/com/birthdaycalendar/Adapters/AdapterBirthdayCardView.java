@@ -92,6 +92,9 @@ public class AdapterBirthdayCardView extends RecyclerView.Adapter<AdapterBirthda
         return birthdayModelArrayList;
     }
 
+
+
+
     public class CardTasarimTutucu extends RecyclerView.ViewHolder {
         private TextView txtBirthdayName;
         private TextView txtNote;
@@ -107,4 +110,6 @@ public class AdapterBirthdayCardView extends RecyclerView.Adapter<AdapterBirthda
 
         }
     }
+
+
 }

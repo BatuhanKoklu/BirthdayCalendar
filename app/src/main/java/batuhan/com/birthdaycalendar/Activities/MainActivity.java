@@ -30,6 +30,7 @@ import java.util.Locale;
 
 import batuhan.com.birthdaycalendar.Adapters.AdapterBirthdayCardView;
 import batuhan.com.birthdaycalendar.Adapters.BirthdayDAO;
+import batuhan.com.birthdaycalendar.Adapters.CalendarAdapter;
 import batuhan.com.birthdaycalendar.Adapters.SwipeToDeleteCallback;
 import batuhan.com.birthdaycalendar.Adapters.VeritabaniYardimcisi;
 import batuhan.com.birthdaycalendar.Helpers.Helpers;
@@ -57,6 +58,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     boolean star;
 
     private Menu menu;
+
+    private CalendarAdapter calendarAdapter;
 
 
 
