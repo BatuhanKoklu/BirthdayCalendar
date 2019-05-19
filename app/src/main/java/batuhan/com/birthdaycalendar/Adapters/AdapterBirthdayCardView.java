@@ -68,6 +68,16 @@ public class AdapterBirthdayCardView extends RecyclerView.Adapter<AdapterBirthda
                     new BirthdayDAO().changeFavoriteStatus(vt,birthdayModel,0);
                 }
 
+                /*if(birthdayModel.getBirthdayFavorite() == 0){
+                    holder.btnFavorite.setBackgroundResource(R.drawable.icon_filled_star_yellow);
+                    new BirthdayDAO().changeFavoriteStatus(vt,birthdayModel,1);
+
+                }
+
+                if(birthdayModel.getBirthdayFavorite() == 1){
+                    holder.btnFavorite.setBackgroundResource(R.drawable.icon_empty_star_yellow);
+                    new BirthdayDAO().changeFavoriteStatus(vt,birthdayModel,0);
+                }*/
             }
         });
     }
@@ -92,14 +102,11 @@ public class AdapterBirthdayCardView extends RecyclerView.Adapter<AdapterBirthda
         return birthdayModelArrayList;
     }
 
-
-
-
     public class CardTasarimTutucu extends RecyclerView.ViewHolder {
         private TextView txtBirthdayName;
         private TextView txtNote;
         private Button btnFavorite;
-
+        private ConstraintLayout mItemLayout;
 
         public CardTasarimTutucu(View view){
             super(view);
@@ -107,9 +114,6 @@ public class AdapterBirthdayCardView extends RecyclerView.Adapter<AdapterBirthda
             txtNote = view.findViewById(R.id.txtNote);
             btnFavorite = view.findViewById(R.id.btnFavorite);
 
-
         }
     }
-
-
 }

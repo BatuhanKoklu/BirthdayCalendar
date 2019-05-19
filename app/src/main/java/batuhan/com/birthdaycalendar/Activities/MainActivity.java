@@ -2,7 +2,6 @@ package batuhan.com.birthdaycalendar.Activities;
 
 import android.graphics.Color;
 import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.MenuItemCompat;
@@ -30,7 +29,7 @@ import java.util.Locale;
 
 import batuhan.com.birthdaycalendar.Adapters.AdapterBirthdayCardView;
 import batuhan.com.birthdaycalendar.Adapters.BirthdayDAO;
-import batuhan.com.birthdaycalendar.Adapters.CalendarAdapter;
+import batuhan.com.birthdaycalendar.Adapters.CalendarCustomView;
 import batuhan.com.birthdaycalendar.Adapters.SwipeToDeleteCallback;
 import batuhan.com.birthdaycalendar.Adapters.VeritabaniYardimcisi;
 import batuhan.com.birthdaycalendar.Helpers.Helpers;
@@ -59,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     private Menu menu;
 
-    private CalendarAdapter calendarAdapter;
+    private static final String TAG = MainActivity.class.getSimpleName();
 
 
 
@@ -78,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         coordinatorLayout = findViewById(R.id.coordinatorLayout);
         adapter = new AdapterBirthdayCardView(getApplicationContext(),birthdayModelList);
 
-
+        CalendarCustomView mView = (CalendarCustomView)  findViewById(R.id.custom_calendar);
 
 
         toolbar = findViewById(R.id.toolbar);
@@ -109,9 +108,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
 
 
-
         //Seçilen günü textview a yazdır
-        calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+        /*calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
             public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth) {
                 String date = dayOfMonth+"/"+month+"/"+year;
@@ -126,8 +124,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
             }
         });
-
-
+*/
 
 
 

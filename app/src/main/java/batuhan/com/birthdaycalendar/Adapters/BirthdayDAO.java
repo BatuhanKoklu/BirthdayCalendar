@@ -4,9 +4,16 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 import batuhan.com.birthdaycalendar.Models.BirthdayModel;
+import batuhan.com.birthdaycalendar.Models.EventObjects;
 import batuhan.com.birthdaycalendar.R;
 
 public class BirthdayDAO {
@@ -124,6 +131,40 @@ public class BirthdayDAO {
         int count = cursor.getCount();
         cursor.close();
         return count;
+    }
+
+    public List<BirthdayModel> getAllFutureEvents(VeritabaniYardimcisi vt){
+        Date dateToday = new Date();
+        List<BirthdayModel> events = new ArrayList<>();
+        String query = "SELECT * FROM tbl_birthdayModel";
+        SQLiteDatabase dbx = vt.getWritableDatabase();
+        Cursor cursor = dbx.rawQuery(query,null);
+        if(cursor.moveToFirst()){
+            do{
+                int id = cursor.getInt(0);
+                String name = cursor.getString(cursor.getColumnIndexOrThrow("birthdayName"));
+                String message = cursor.getString(cursor.getColumnIndexOrThrow("birthdayNote"));
+                String startDate = cursor.getString(cursor.getColumnIndexOrThrow("birthdayDate"));
+                //convert start date to date object
+                Date reminderDate = convertStringToDate(startDate);
+                if(reminderDate.after(dateToday) || reminderDate.equals(dateToday)){
+                    events.add(new BirthdayModel(id,name,message,startDate,1));
+                }
+            }while (cursor.moveToNext());
+        }
+        cursor.close();
+        return events;
+    }
+
+    public Date convertStringToDate(String dateInString){
+        DateFormat format = new SimpleDateFormat("dd/M/yyyy", Locale.ENGLISH);
+        Date date = null;
+        try {
+            date = format.parse(dateInString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return date;
     }
 
 
