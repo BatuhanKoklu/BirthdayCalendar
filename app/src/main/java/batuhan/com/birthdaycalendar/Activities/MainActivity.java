@@ -1,7 +1,9 @@
 package batuhan.com.birthdaycalendar.Activities;
 
 import android.graphics.Color;
+import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.MenuItemCompat;
@@ -18,22 +20,27 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
 import batuhan.com.birthdaycalendar.Adapters.AdapterBirthdayCardView;
 import batuhan.com.birthdaycalendar.Adapters.BirthdayDAO;
-import batuhan.com.birthdaycalendar.Adapters.CalendarCustomView;
+import batuhan.com.birthdaycalendar.Adapters.CalendarAdapter;
 import batuhan.com.birthdaycalendar.Adapters.SwipeToDeleteCallback;
 import batuhan.com.birthdaycalendar.Adapters.VeritabaniYardimcisi;
 import batuhan.com.birthdaycalendar.Helpers.Helpers;
 import batuhan.com.birthdaycalendar.Models.BirthdayModel;
+import batuhan.com.birthdaycalendar.Models.GunModel;
 import batuhan.com.birthdaycalendar.R;
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
@@ -58,9 +65,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     private Menu menu;
 
-    private static final String TAG = MainActivity.class.getSimpleName();
+    private GridView gridView;
 
-
+    private Button btnNext , btnPrev;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,14 +77,12 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         vt = new VeritabaniYardimcisi(this);
         h = new Helpers();
 
+
         birthdayModelList = new ArrayList<BirthdayModel>();
         birthdayModelList = new BirthdayDAO().getAllBirthdays(vt);
 
         //calendarView = findViewById(R.id.calendarView);
-        coordinatorLayout = findViewById(R.id.coordinatorLayout);
         adapter = new AdapterBirthdayCardView(getApplicationContext(),birthdayModelList);
-
-        CalendarCustomView mView = (CalendarCustomView)  findViewById(R.id.custom_calendar);
 
 
         toolbar = findViewById(R.id.toolbar);
@@ -99,6 +104,21 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         txtDate.setText(date);
 
         enableSwipeToDeleteAndUndo();
+
+        gridView = findViewById(R.id.calendarGridView);
+
+        //0 = current Month
+        CalendarAdapter calendarAdapter = new CalendarAdapter(this,denemearray(0));
+        gridView.setAdapter(calendarAdapter);
+
+        btnNext = findViewById(R.id.btnNext);
+        btnNext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CalendarAdapter calendarAdapter1 = new CalendarAdapter(getApplicationContext(),denemearray(1));
+                gridView.setAdapter(calendarAdapter1);
+            }
+        });
 
 
 
@@ -129,6 +149,77 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
 
 
+    }
+
+
+    public ArrayList<GunModel> denemearray(int monthPosition){
+
+        ArrayList<GunModel> gunler = new ArrayList<>();
+
+        Calendar calendar = Calendar.getInstance(); //Bulunduğumuz gün
+
+        calendar.add(Calendar.MONTH,monthPosition);
+
+        calendar.set(Calendar.DAY_OF_MONTH,1); //Bulunduğumuz ayın 1'ine set et
+        int monthBeginningCell = calendar.get(Calendar.DAY_OF_WEEK) - 2;
+        int monthMaxDays = calendar.getActualMaximum(Calendar.DAY_OF_MONTH); //Ayda kaç gün var
+
+        calendar.add(Calendar.DAY_OF_MONTH,-monthBeginningCell);
+
+        int temp = 0;
+        int bos = 0;
+        while (gunler.size() < monthMaxDays + bos) //bos eklenen gunleride while a ekliyor.
+        {
+
+            Date date = calendar.getTime();
+            DateFormat dateFormat = new SimpleDateFormat("dd/mm/yyyy");
+
+            String insertDate = dateFormat.format(date);
+            String[] items1 = insertDate.split("/");
+            String d1=items1[0];
+            String m1=items1[1];
+            String y1=items1[2];
+            int d = Integer.parseInt(d1);
+            int m = Integer.parseInt(m1);
+            int y = Integer.parseInt(y1);
+
+
+            if(d > 7 && temp == 0){
+                GunModel model = new GunModel(null,0);
+                gunler.add(model);
+                bos++;
+            }else{
+                GunModel model = new GunModel("asd",d);
+                gunler.add(model);
+                temp = 1;
+            }
+
+
+            calendar.add(Calendar.DAY_OF_MONTH, 1); //Günü ilerlet
+        }
+
+        return gunler;
+
+    }
+
+    public ArrayList<GunModel> setupArrays(){
+
+        Calendar calendarNow = Calendar.getInstance();
+        ArrayList<GunModel> gunler = new ArrayList<>();
+
+        calendarNow.set(Calendar.DAY_OF_MONTH,1); // Günü bulunduğum ayın ilk gününe set ettim.
+        int monthMaxDays = calendarNow.getActualMaximum(Calendar.DAY_OF_MONTH); //Ayda kaç gün var
+        int day = calendarNow.get(Calendar.DAY_OF_MONTH);// 1 oldu integer olarak
+
+
+        for (int i = 1; i >= monthMaxDays ; i++) {
+
+            GunModel model = new GunModel(calendarNow.getDisplayName(Calendar.DAY_OF_WEEK,Calendar.LONG, Locale.getDefault()),i);
+            gunler.add(model);
+            calendarNow.set(Calendar.DAY_OF_MONTH,1);
+        }
+
+        return gunler;
     }
 
     private void enableSwipeToDeleteAndUndo() {

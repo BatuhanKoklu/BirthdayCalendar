@@ -36,21 +36,10 @@
 
 
 
-    <batuhan.com.birthdaycalendar.Adapters.CalendarCustomView
-        android:id="@+id/custom_calendar"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/constraintLayout2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar"></batuhan.com.birthdaycalendar.Adapters.CalendarCustomView>
-
-    <!--<android.support.constraint.ConstraintLayout
-        android:id="@+id/constraintLayout"
+<android.support.constraint.ConstraintLayout
+        android:id="@+id/calendarView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="500dp"
         android:background="@color/colorPrimary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -79,16 +68,6 @@
             app:layout_constraintEnd_toStartOf="@+id/btnNext"
             app:layout_constraintStart_toEndOf="@+id/btnPrev"
             app:layout_constraintTop_toTopOf="parent">
-
-            <TextView
-                android:id="@+id/txtDateYear"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="2018"
-                android:textAppearance="@android:style/TextAppearance.Holo.Medium"
-                android:textColor="@color/colorWhite"
-                android:textSize="20sp"
-                android:textStyle="normal" />
 
             <TextView
                 android:id="@+id/txtDisplayDate"
@@ -205,18 +184,21 @@
 
         </LinearLayout>
 
-        <GridView
-            android:id="@+id/gridView"
-            android:layout_width="match_parent"
-            android:layout_height="240dp"
-            android:layout_marginTop="10dp"
-            android:numColumns="7"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/calendar_header" />
+    <GridView
+        android:id="@+id/calendarGridView"
+        android:layout_width="match_parent"
+        android:layout_height="240dp"
+        android:layout_marginTop="10dp"
+        android:numColumns="7"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/calendar_header"
+        android:gravity="center"
+        android:horizontalSpacing="5dp"
+        android:verticalSpacing="5dp"/>
 
 
-    </android.support.constraint.ConstraintLayout>-->
+    </android.support.constraint.ConstraintLayout>
 
 
     <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -228,6 +210,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout2"
         tools:context=".MainActivity">
 
         <RelativeLayout
@@ -244,32 +227,14 @@
     </android.support.design.widget.CoordinatorLayout>
 
 
-    <!--<RelativeLayout
-        android:id="@+id/relativeLayout"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout2">
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recyclerview"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-    </RelativeLayout>-->
-
-
     <android.support.constraint.ConstraintLayout
         android:id="@+id/constraintLayout2"
         android:layout_width="0dp"
         android:layout_height="30dp"
-        android:layout_marginBottom="8dp"
         android:background="@color/colorGrey"
-        app:layout_constraintBottom_toTopOf="@+id/coordinatorLayout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/calendarView">
 
         <TextView
             android:id="@+id/txtDate"
