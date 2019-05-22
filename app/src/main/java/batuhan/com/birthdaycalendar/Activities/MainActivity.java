@@ -26,6 +26,7 @@ import android.widget.Toast;
 
 
 import java.text.DateFormat;
+import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -39,6 +40,7 @@ import batuhan.com.birthdaycalendar.Adapters.CalendarAdapter;
 import batuhan.com.birthdaycalendar.Adapters.SwipeToDeleteCallback;
 import batuhan.com.birthdaycalendar.Adapters.VeritabaniYardimcisi;
 import batuhan.com.birthdaycalendar.Helpers.Helpers;
+import batuhan.com.birthdaycalendar.Models.AyModel;
 import batuhan.com.birthdaycalendar.Models.BirthdayModel;
 import batuhan.com.birthdaycalendar.Models.GunModel;
 import batuhan.com.birthdaycalendar.R;
@@ -67,7 +69,10 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     private GridView gridView;
 
-    private Button btnNext , btnPrev;
+    private Button btnNext , btnPrev , btnToday;
+    private TextView txtDisplayDate , txtDateDay;
+
+    int initialMonthPosition = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,32 +103,33 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         h.getBirthdays(vt,adapter,recyclerView,this);
 
 
-        txtDate = findViewById(R.id.txtDate);
+        //txtDate = findViewById(R.id.txtDate);
         //Page yüklendiğinde o günün date i text e yazılsın
         String date = new SimpleDateFormat("dd/M/yyyy", Locale.getDefault()).format(new Date());
-        txtDate.setText(date);
+        //txtDate.setText(date);
 
         enableSwipeToDeleteAndUndo();
 
         gridView = findViewById(R.id.calendarGridView);
 
+        txtDisplayDate = findViewById(R.id.txtDisplayDate);
+        txtDateDay = findViewById(R.id.txtDateDay);
+
         //0 = current Month
         CalendarAdapter calendarAdapter = new CalendarAdapter(this,denemearray(0));
         gridView.setAdapter(calendarAdapter);
 
+
         btnNext = findViewById(R.id.btnNext);
+
         btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CalendarAdapter calendarAdapter1 = new CalendarAdapter(getApplicationContext(),denemearray(1));
+                CalendarAdapter calendarAdapter1 = new CalendarAdapter(getApplicationContext(),denemearray(initialMonthPosition));
                 gridView.setAdapter(calendarAdapter1);
+                initialMonthPosition = initialMonthPosition +1;
             }
         });
-
-
-
-
-
 
 
 
@@ -152,13 +158,15 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     }
 
 
-    public ArrayList<GunModel> denemearray(int monthPosition){
+    public AyModel denemearray(int monthPosition){
 
-        ArrayList<GunModel> gunler = new ArrayList<>();
+        ArrayList<GunModel> gunler = new ArrayList<>();//boş liste
+        AyModel ayModel = new AyModel();
+
 
         Calendar calendar = Calendar.getInstance(); //Bulunduğumuz gün
 
-        calendar.add(Calendar.MONTH,monthPosition);
+        calendar.add(Calendar.MONTH,monthPosition); //0 olursa bulunduğun ay , 1 olursa bir sonraki ay -1 olursa bir önceki ay
 
         calendar.set(Calendar.DAY_OF_MONTH,1); //Bulunduğumuz ayın 1'ine set et
         int monthBeginningCell = calendar.get(Calendar.DAY_OF_WEEK) - 2;
@@ -168,11 +176,11 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
         int temp = 0;
         int bos = 0;
-        while (gunler.size() < monthMaxDays + bos) //bos eklenen gunleride while a ekliyor.
+        while (gunler.size() < monthMaxDays + bos) //bos eklenen gunleride while a ekliyor. (29,30,31 gibi günleride eklediği için onlar içinde ekstra yer açmak gerekli
         {
 
             Date date = calendar.getTime();
-            DateFormat dateFormat = new SimpleDateFormat("dd/mm/yyyy");
+            DateFormat dateFormat = new SimpleDateFormat("dd/mm/yyyy");//tarihi bu sekilde formatladık
 
             String insertDate = dateFormat.format(date);
             String[] items1 = insertDate.split("/");
@@ -194,33 +202,44 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 temp = 1;
             }
 
+            if(gunler.size() > 26){
+                ayModel.setAy_isim(m1);
+                ayModel.setAy_sayi(m);
+                ayModel.setGun_list(gunler);
+            }
+
+
+
+
+
+
 
             calendar.add(Calendar.DAY_OF_MONTH, 1); //Günü ilerlet
         }
+        //gunler hazir!
 
-        return gunler;
+        setCurrentDateToTexts();
+
+
+
+        return ayModel;
 
     }
 
-    public ArrayList<GunModel> setupArrays(){
+    public void setCurrentDateToTexts(){
+        Calendar calendarTexts = Calendar.getInstance();
+        int selectedDay = calendarTexts.get(Calendar.DATE);
+        txtDisplayDate.setText(selectedDay + " " +new SimpleDateFormat( "MMM").format(calendarTexts.getTime()));
+        txtDateDay.setText(calendarTexts.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault()));
 
-        Calendar calendarNow = Calendar.getInstance();
-        ArrayList<GunModel> gunler = new ArrayList<>();
-
-        calendarNow.set(Calendar.DAY_OF_MONTH,1); // Günü bulunduğum ayın ilk gününe set ettim.
-        int monthMaxDays = calendarNow.getActualMaximum(Calendar.DAY_OF_MONTH); //Ayda kaç gün var
-        int day = calendarNow.get(Calendar.DAY_OF_MONTH);// 1 oldu integer olarak
-
-
-        for (int i = 1; i >= monthMaxDays ; i++) {
-
-            GunModel model = new GunModel(calendarNow.getDisplayName(Calendar.DAY_OF_WEEK,Calendar.LONG, Locale.getDefault()),i);
-            gunler.add(model);
-            calendarNow.set(Calendar.DAY_OF_MONTH,1);
-        }
-
-        return gunler;
     }
+
+    public String convertMonthToString(Calendar c){
+        String month = new SimpleDateFormat("MMM").format(c.getTime());
+        return month;
+    }
+
+
 
     private void enableSwipeToDeleteAndUndo() {
         SwipeToDeleteCallback swipeToDeleteCallback = new SwipeToDeleteCallback(this) {

@@ -64,8 +64,11 @@ public class CalendarAdapter extends BaseAdapter {
         String insertDate = dateFormat.format(today);
         String[] items1 = insertDate.split("/");
         String d1=items1[0];
-
-        int d = Integer.parseInt(d1);
+        String m1=items1[1];
+        String y1=items1[2];
+        int d = Integer.parseInt(d1); //Gün
+        int m = Integer.parseInt(m1); //Ay
+        int y = Integer.parseInt(y1); //Yıl
 
 
         if (child == null) {
@@ -86,6 +89,7 @@ public class CalendarAdapter extends BaseAdapter {
             holder.txtDay.setText("");
             holder.cellConsLayout.setBackgroundResource(R.color.colorPrimary);
         }else if(model.getGun_sayi() == d){
+            //Change current Date's shape
             holder.txtDay.setText(String.valueOf(model.getGun_sayi()));
             holder.cellConsLayout.setBackgroundResource(R.drawable.today_cell_shape);
             holder.txtDay.setTextColor(context.getResources().getColor(R.color.colorWhite));

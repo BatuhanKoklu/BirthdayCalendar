@@ -35,11 +35,10 @@
     </CalendarView>-->
 
 
-
-<android.support.constraint.ConstraintLayout
+    <android.support.constraint.ConstraintLayout
         android:id="@+id/calendarView"
         android:layout_width="match_parent"
-        android:layout_height="500dp"
+        android:layout_height="wrap_content"
         android:background="@color/colorPrimary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -53,7 +52,9 @@
             android:layout_marginStart="50dp"
             android:layout_marginTop="50dp"
             android:layout_marginEnd="10dp"
+            android:layout_marginBottom="50dp"
             android:background="@drawable/ic_arrow_left"
+            app:layout_constraintBottom_toTopOf="@+id/calendar_header"
             app:layout_constraintEnd_toStartOf="@+id/date_display"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -62,7 +63,6 @@
             android:id="@+id/date_display"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
             android:gravity="center"
             android:orientation="vertical"
             app:layout_constraintEnd_toStartOf="@+id/btnNext"
@@ -77,7 +77,7 @@
                 android:text="17 Feb"
                 android:textAppearance="@android:style/TextAppearance.Large"
                 android:textColor="@color/colorWhite"
-                android:textSize="35sp"
+                android:textSize="32sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -109,7 +109,9 @@
             android:layout_marginStart="10dp"
             android:layout_marginTop="50dp"
             android:layout_marginEnd="50dp"
+            android:layout_marginBottom="50dp"
             android:background="@drawable/ic_arrow_right"
+            app:layout_constraintBottom_toTopOf="@+id/calendar_header"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/date_display"
             app:layout_constraintTop_toTopOf="parent" />
@@ -184,18 +186,19 @@
 
         </LinearLayout>
 
-    <GridView
-        android:id="@+id/calendarGridView"
-        android:layout_width="match_parent"
-        android:layout_height="240dp"
-        android:layout_marginTop="10dp"
-        android:numColumns="7"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/calendar_header"
-        android:gravity="center"
-        android:horizontalSpacing="5dp"
-        android:verticalSpacing="5dp"/>
+        <GridView
+            android:id="@+id/calendarGridView"
+            android:layout_width="match_parent"
+            android:layout_height="240dp"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:horizontalSpacing="5dp"
+            android:numColumns="7"
+            android:verticalSpacing="5dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/calendar_header" />
 
 
     </android.support.constraint.ConstraintLayout>
@@ -210,43 +213,23 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout2"
+        app:layout_constraintTop_toBottomOf="@+id/calendarView"
         tools:context=".MainActivity">
 
         <RelativeLayout
             android:id="@+id/relativeLayout"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recyclerview"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:layout_alignParentBottom="true"
+                />
 
         </RelativeLayout>
     </android.support.design.widget.CoordinatorLayout>
 
-
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/constraintLayout2"
-        android:layout_width="0dp"
-        android:layout_height="30dp"
-        android:background="@color/colorGrey"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/calendarView">
-
-        <TextView
-            android:id="@+id/txtDate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:textSize="17sp"
-            android:textStyle="italic|bold"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-    </android.support.constraint.ConstraintLayout>
 
 </android.support.constraint.ConstraintLayout>

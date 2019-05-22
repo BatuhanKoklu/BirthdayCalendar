@@ -8,6 +8,9 @@ public class AyModel {
     private int ay_sayi; // 1-12
     private ArrayList<GunModel> gun_list;
 
+    public AyModel() {
+    }
+
     public AyModel(String ay_isim, int ay_sayi, ArrayList<GunModel> gun_list) {
         this.ay_isim = ay_isim;
         this.ay_sayi = ay_sayi;
